@@ -195,7 +195,7 @@ class AmazonAppstore extends MarketBot\Android
             $apps = array();
             $this->initScraper($url);
 
-            $items = $this->document['div.result.product'];
+            $items = $this->document['#atfResults li.ilo2'];
             if (!$items->length()) {
                 return false;
             }
