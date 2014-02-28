@@ -1,0 +1,23 @@
+{
+    "name": "jonursenbach/marketbot",
+    "description": "Smartphone marketplace scraper.",
+    "license": "Modified BSD",
+    "require": {
+        "electrolinux/phpquery": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*@dev",
+        "phpunit/php-code-coverage": "1.2.*@dev",
+        "phpunit/phpunit-mock-objects": "1.2.*@dev",
+        "johnkary/phpunit-speedtrap": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "PastFuture/MarketBot": "lib/" }
+    },
+    "authors": [
+        {
+            "name": "Jon Ursenbach",
+            "email": "jon@ursenba.ch"
+        }
+    ]
+}
