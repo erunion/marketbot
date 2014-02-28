@@ -12,7 +12,7 @@
         "johnkary/phpunit-speedtrap": "dev-master"
     },
     "autoload": {
-        "psr-0": { "PastFuture/MarketBot": "lib/" }
+        "psr-0": { "PastFuture": "lib/" }
     },
     "authors": [
         {
