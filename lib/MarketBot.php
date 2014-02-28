@@ -49,13 +49,6 @@ namespace PastFuture\MarketBot;
 class MarketBot
 {
     /**
-     * Version
-     *
-     * @var string
-     */
-    protected $version = '0.1';
-
-    /**
      * Default language
      *
      * @var string
