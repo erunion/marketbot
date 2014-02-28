@@ -329,7 +329,7 @@ class GooglePlay extends MarketBot\Android
             $apps = array();
             $this->initScraper($url);
 
-            $items = $this->document['.search-results-item'];
+            $items = $this->document['div.card-list .card'];
             if (!$items->length()) {
                 return false;
             }
