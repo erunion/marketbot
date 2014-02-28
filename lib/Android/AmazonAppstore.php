@@ -3,7 +3,7 @@
 /**
  * MarketBot
  *
- * @author Jon Ursenbach <jon@gdgt.com>
+ * @author Jon Ursenbach <jon@ursenba.ch>
  * @link http://github.com/pastfuture/MarketBot
  * @license Modified BSD
  * @version 0.1
@@ -49,7 +49,7 @@ use PastFuture\MarketBot\App;
  * @todo Strip images from the product description so it's just text
  *
  * @package MarketBot
- * @author Jon Ursenbach <jon@gdgt.com>
+ * @author Jon Ursenbach <jon@ursenba.ch>
  * @since 0.1
  */
 class AmazonAppstore extends MarketBot\Android

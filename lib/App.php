@@ -3,7 +3,7 @@
 /**
  * MarketBot
  *
- * @author Jon Ursenbach <jon@gdgt.com>
+ * @author Jon Ursenbach <jon@ursenba.ch>
  * @link http://github.com/pastfuture/MarketBot
  * @license Modified BSD
  * @version 0.1
@@ -43,7 +43,7 @@ namespace PastFuture\MarketBot;
  * App
  *
  * @package MarketBot
- * @author Jon Ursenbach <jon@gdgt.com>
+ * @author Jon Ursenbach <jon@ursenba.ch>
  * @since 0.1
  */
 abstract class App
