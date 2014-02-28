@@ -40,6 +40,7 @@
 namespace PastFuture\MarketBot;
 
 use PastFuture\MarketBot\App;
+use pq;
 
 /**
  * Windows Phone
@@ -94,7 +95,7 @@ class WindowsPhone extends MarketBot
             $url = $this->getDetailsUrl($market_id);
             $this->initScraper($url);
 
-            $page = \pq('#application');
+            $page = $this->document['#application'];
 
             $name = $page->find('h1[itemprop="name"]')->html();
             if (empty($name)) {
@@ -125,7 +126,7 @@ class WindowsPhone extends MarketBot
             $related_apps = $page->find('#appRelatedApps td.medium');
             if ($related_apps->length()) {
                 foreach ($related_apps as $related_app) {
-                    $related_app = \pq($related_app);
+                    $related_app = pq($related_app);
 
                     $related_market_id = $related_app->find('a.title')->attr('data-ov');
                     $related_market_id = App\WindowsPhoneApp::constructMarketId($related_market_id);
@@ -141,7 +142,7 @@ class WindowsPhone extends MarketBot
             $screenshots = $page->find('#screenshots li img');
             if ($screenshots->length()) {
                 foreach ($screenshots as $screenshot) {
-                    $screenshot = \pq($screenshot);
+                    $screenshot = pq($screenshot);
 
                     $app->addScreenshot($screenshot->attr('src'));
                 }
@@ -150,7 +151,7 @@ class WindowsPhone extends MarketBot
             $software_requirements = $page->find('#softwareRequirements')->children('span');
             if ($software_requirements->length()) {
                 foreach ($software_requirements as $software) {
-                    $software = \pq($software);
+                    $software = pq($software);
 
                     $app->addSoftwareRequirement($software->attr('itemprop'), $software->html());
                 }
@@ -159,7 +160,7 @@ class WindowsPhone extends MarketBot
             $hardware_requirements = $page->find('#hardwareRequirements ul li');
             if ($hardware_requirements->length()) {
                 foreach ($hardware_requirements as $hardware) {
-                    $hardware = \pq($hardware);
+                    $hardware = pq($hardware);
 
                     $app->addHardwareRequirement($hardware->html());
                 }
@@ -168,7 +169,7 @@ class WindowsPhone extends MarketBot
             $supported_languages = $page->find('#languageList span');
             if ($supported_languages->length()) {
                 foreach ($supported_languages as $language) {
-                    $language = \pq($language);
+                    $language = pq($language);
 
                     $app->addSupportedLanguage($language->html());
                 }
@@ -201,13 +202,13 @@ class WindowsPhone extends MarketBot
             $apps = array();
             $this->initScraper($url);
 
-            $items = \pq('td.medium:not(.empty)');
+            $items = $this->document['td.medium:not(.empty)'];
             if (!$items->length()) {
                 return false;
             }
 
             foreach ($items as $item) {
-                $item = \pq($item);
+                $item = pq($item);
 
                 $title = $item->find('a.title');
 

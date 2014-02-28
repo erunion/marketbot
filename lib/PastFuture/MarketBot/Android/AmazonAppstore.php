@@ -41,6 +41,7 @@ namespace PastFuture\MarketBot\Android;
 
 use PastFuture\MarketBot;
 use PastFuture\MarketBot\App;
+use pq;
 
 /**
  * Amazon Appstore
@@ -91,7 +92,7 @@ class AmazonAppstore extends MarketBot\Android
             $url = $this->getDetailsUrl($market_id);
             $this->initScraper($url);
 
-            $page = \pq('body');
+            $page = $this->document['body'];
 
             $name = $page->find('div.buying h1.parseasinTitle span')->html();
             if (empty($name)) {
@@ -117,7 +118,7 @@ class AmazonAppstore extends MarketBot\Android
             $features = $page->find('#feature-bullets_feature_div ul li');
             if ($features->length()) {
                 foreach ($features as $feature) {
-                    $feature = \pq($feature);
+                    $feature = pq($feature);
 
                     $app->addProductFeature($feature->text());
                 }
@@ -126,7 +127,7 @@ class AmazonAppstore extends MarketBot\Android
             $related_apps = $page->find('#purchaseButtonWrapper ul li');
             if ($related_apps->length()) {
                 foreach ($related_apps as $related) {
-                    $related = \pq($related);
+                    $related = pq($related);
 
                     $related = str_replace('purchase_', '', $related->find('div:first')->attr('id'));
                     $app->addRelated($related);
@@ -142,7 +143,7 @@ class AmazonAppstore extends MarketBot\Android
             $permissions = $page->find('#appPermissions ul span');
             if ($permissions->length()) {
                 foreach ($permissions as $permission) {
-                    $permission = \pq($permission);
+                    $permission = pq($permission);
 
                     $type = $permission->attr('title');
                     $text = $permission->text();
@@ -194,13 +195,13 @@ class AmazonAppstore extends MarketBot\Android
             $apps = array();
             $this->initScraper($url);
 
-            $items = \pq('div.result.product');
+            $items = $this->document['div.result.product'];
             if (!$items->length()) {
                 return false;
             }
 
             foreach ($items as $item) {
-                $item = \pq($item);
+                $item = pq($item);
 
                 $market_id = $item->attr('name');
 

@@ -39,6 +39,8 @@
 
 namespace PastFuture\MarketBot;
 
+use \phpQuery;
+
 /**
  * MarketBot
  *
@@ -56,6 +58,13 @@ class MarketBot
     protected $language = 'en';
 
     /**
+     * phpQuery document object.
+     *
+     * @var phpQueryObject
+     */
+    protected $document;
+
+    /**
      * Initialize the phpQuery scraper for use.
      *
      * @param string $url
@@ -64,8 +73,12 @@ class MarketBot
      */
     protected function initScraper($url)
     {
+        $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) ' .
+          'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36';
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_USERAGENT, $user_agent);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -73,7 +86,7 @@ class MarketBot
         $response = curl_exec($ch);
         curl_close($ch);
 
-        \phpQuery::newDocument($response);
+        $this->document = phpQuery::newDocument($response);
     }
 
     /**

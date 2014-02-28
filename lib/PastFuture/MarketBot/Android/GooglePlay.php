@@ -41,6 +41,7 @@ namespace PastFuture\MarketBot\Android;
 
 use PastFuture\MarketBot;
 use PastFuture\MarketBot\App;
+use pq;
 
 /**
  * Google Play
@@ -142,7 +143,7 @@ class GooglePlay extends MarketBot\Android
             $url = $this->getDetailsUrl($market_id);
             $this->initScraper($url);
 
-            $page = \pq('.details-page');
+            $page = $this->document['.details-page'];
 
             $name = $page->find('.doc-banner-title')->text();
             if (empty($name)) {
@@ -167,7 +168,7 @@ class GooglePlay extends MarketBot\Android
             $similar = $page->find('.doc-similar')->children();
             if (!empty($similar)) {
                 foreach ($similar as $similar_type) {
-                    $similar_type = \pq($similar_type);
+                    $similar_type = pq($similar_type);
 
                     $type = $similar_type->attr('data-analyticsid');
                     $type = str_replace('-', '_', $type);
@@ -175,7 +176,7 @@ class GooglePlay extends MarketBot\Android
                     $similar_apps = $similar_type->find('.snippet-list')->children();
                     if (!empty($similar_apps)) {
                         foreach ($similar_apps as $similar_app) {
-                            $similar_app = \pq($similar_app);
+                            $similar_app = pq($similar_app);
                             $similar_app = $similar_app->find('div:first')->attr('data-docid');
 
                             switch ($type) {
@@ -217,7 +218,7 @@ class GooglePlay extends MarketBot\Android
             $videos = $page->find('.doc-video-section object');
             if ($videos->length()) {
                 foreach ($videos as $video) {
-                    $video = \pq($video);
+                    $video = pq($video);
 
                     $app->addVideo($video->find('embed')->attr('src'));
                 }
@@ -228,7 +229,7 @@ class GooglePlay extends MarketBot\Android
                 // Could rewrite this with pq->map() if they had better documentation on
                 // how to use it.
                 foreach ($screenshots as $screenshot) {
-                    $screenshot = \pq($screenshot);
+                    $screenshot = pq($screenshot);
 
                     $app->addScreenshot($screenshot->attr('src'));
                 }
@@ -239,11 +240,11 @@ class GooglePlay extends MarketBot\Android
                 $permissions = $page->find('#doc-permissions-' . $permission_type . ' .doc-permission-group');
                 if ($permissions->length()) {
                     foreach ($permissions as $permission) {
-                        $permission = \pq($permission);
+                        $permission = pq($permission);
 
                         $title = $permission->find('.doc-permission-group-title')->text();
                         foreach ($permission->find('.doc-permission-description') as $description) {
-                            $description = \pq($description);
+                            $description = pq($description);
 
                             $app->addPermission(
                                 array(
@@ -260,7 +261,7 @@ class GooglePlay extends MarketBot\Android
 
             $metadata = $page->find('.doc-metadata dt');
             foreach ($metadata as $meta) {
-                $meta = \pq($meta);
+                $meta = pq($meta);
                 $field_name = $meta->text();
 
                 switch ($field_name) {
@@ -328,13 +329,13 @@ class GooglePlay extends MarketBot\Android
             $apps = array();
             $this->initScraper($url);
 
-            $items = \pq('.search-results-item');
+            $items = $this->document['.search-results-item'];
             if (!$items->length()) {
                 return false;
             }
 
             foreach ($items as $item) {
-                $item = \pq($item);
+                $item = pq($item);
 
                 $market_id = $item->attr('data-docid');
 
