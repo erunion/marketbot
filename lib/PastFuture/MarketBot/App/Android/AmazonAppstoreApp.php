@@ -72,10 +72,7 @@ class AmazonAppstoreApp extends MarketBot\App\AndroidApp
     public function setPrice($price)
     {
         if (!empty($price)) {
-            $price = trim(strtolower($price));
-            $price = str_replace('$', '', $price);
-            $price = trim($price);
-
+            $price = trim(str_replace('$', '', $price));
             parent::setPrice($price);
         }
     }

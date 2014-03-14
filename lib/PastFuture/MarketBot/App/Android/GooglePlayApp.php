@@ -72,13 +72,6 @@ class GooglePlayApp extends MarketBot\App\AndroidApp
     protected $more_from_developer = array();
 
     /**
-     * Other apps users have installed.
-     *
-     * @var array
-     */
-    protected $users_also_installed = array();
-
-    /**
      * Images
      *
      * @var array
@@ -188,29 +181,6 @@ class GooglePlayApp extends MarketBot\App\AndroidApp
     public function getMoreFromDeveloper()
     {
         return $this->more_from_developer;
-    }
-
-    /**
-     * Add the market ID of an app that users have also installed.
-     *
-     * @param array $app
-     *
-     * @return void
-     */
-    public function addUsersAlsoInstalled($app)
-    {
-        $this->users_also_installed[] = $app;
-    }
-
-    /**
-     * Get apps that users have also installed. The returned array just contains
-     * market IDs; if you want more data, run a get() call on the ID.
-     *
-     * @return array
-     */
-    public function getUsersAlsoInstalled()
-    {
-        return $this->users_also_installed;
     }
 
     /**

@@ -179,7 +179,7 @@ abstract class App
             $method = 'set' . $method_name;
 
             if (method_exists($this, $method)) {
-                $this->{$method}($value);
+                $this->{$method}(trim($value));
             }
         }
     }
@@ -347,7 +347,7 @@ abstract class App
      */
     public function setPrice($price)
     {
-        $this->price = (float)$price;
+        $this->price = (double)$price;
     }
 
     /**
@@ -457,7 +457,7 @@ abstract class App
      */
     public function getContentRating()
     {
-        return $this->content_raitng;
+        return $this->content_rating;
     }
 
     /**

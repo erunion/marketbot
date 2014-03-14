@@ -117,7 +117,7 @@ class GooglePlay extends MarketBot\Android
      *
      * @return array|false Array if the item and data were found, false otherwise.
      */
-    public function get($market_id, $type)
+    public function get($market_id, $type='apps')
     {
         // Only apps are supported right now.
         if (in_array($type, array('music', 'books', 'movies', 'magazines'))) {
@@ -141,11 +141,12 @@ class GooglePlay extends MarketBot\Android
 
         try {
             $url = $this->getDetailsUrl($market_id);
+
             $this->initScraper($url);
 
-            $page = $this->document['.details-page'];
+            $page = $this->document['.details-wrapper'];
 
-            $name = $page->find('.doc-banner-title')->text();
+            $name = $page->find('.document-title')->text();
             if (empty($name)) {
                 return false;
             }
@@ -155,44 +156,27 @@ class GooglePlay extends MarketBot\Android
                     'market_id' => $market_id,
                     'url' => $url,
                     'name' => $name,
-                    'developer' => $page->find('.doc-banner-title-container a')->text(),
-                    'description' => $page->find('#doc-original-text')->html(),
+                    'developer' => $page->find('.details-info div[itemprop="author"] span[itemprop="name"]')->text(),
+                    'price' => $page->find('.details-actions button.price span:last')->text(),
+                    'description' => $page->find('.details-section.description div[itemprop="description"] div:first')->html(),
 
-                    'release_notes' => $page->find('.doc-whatsnew-container')->html(),
+                    'release_notes' => $page->find('.details-section.whatsnew .recent-change')->text(),
 
                     'rating' => $page->find('.average-rating-value')->text(),
-                    'votes' => $page->find('.votes:first')->text()
+                    'votes' => $page->find('.reviews-stats .reviews-num')->text(),
+
+                    'category' => $page->find('div.details-info span[itemprop="genre"]')->text(),
+                    'current_version' => $page->find('.details-section.metadata div[itemprop="softwareVersion"]')->text(),
+                    'installs' => $page->find('.details-section.metadata div[itemprop="numDownloads"]')->text(),
+                    'size' => $page->find('.details-section.metadata div[itemprop="fileSize"]')->text(),
+                    'content_rating' => $page->find('.details-section.metadata div[itemprop="contentRating"]')->text(),
+                    'requires' => $page->find('.details-section.metadata div[itemprop="operatingSystems"]')->text(),
                 )
             );
 
-            $similar = $page->find('.doc-similar')->children();
-            if (!empty($similar)) {
-                foreach ($similar as $similar_type) {
-                    $similar_type = pq($similar_type);
-
-                    $type = $similar_type->attr('data-analyticsid');
-                    $type = str_replace('-', '_', $type);
-
-                    $similar_apps = $similar_type->find('.snippet-list')->children();
-                    if (!empty($similar_apps)) {
-                        foreach ($similar_apps as $similar_app) {
-                            $similar_app = pq($similar_app);
-                            $similar_app = $similar_app->find('div:first')->attr('data-docid');
-
-                            switch ($type) {
-                                case 'more_from_developer':
-                                    $app->addMoreFromDeveloper($similar_app);
-                                    break;
-                                case 'related':
-                                    $app->addRelated($similar_app);
-                                    break;
-                                case 'users_also_installed':
-                                    $app->addUsersAlsoInstalled($similar_app);
-                                    break;
-                            }
-                        }
-                    }
-                }
+            $last_updated = $page->find('div[itemprop="author"] div.document-subtitle');
+            if ($last_updated->length()) {
+                $app->setLastUpdated(str_replace('- ', '', $last_updated->text()));
             }
 
             $icon = $page->find('.doc-banner-icon img')->attr('src');
@@ -203,16 +187,14 @@ class GooglePlay extends MarketBot\Android
             $app->setImageIconLarge($icon);
             $app->setImageBanner($banner);
 
-            $website = $page->find('.doc-overview a:contains("Visit Developer\'s Website")');
+            $website = $page->find('.details-section.metadata a.dev-link:contains("Visit Developer\'s Website")');
             if ($website->length()) {
-                $website = $website->attr('href');
-                $app->setWebsiteUrl(substr($website, strlen('http://www.google.com/url?q=')));
+                $app->setWebsiteUrl($website->attr('href'));
             }
 
-            $email = $page->find('.doc-overview a:contains("Email Developer")');
+            $email = $page->find('.details-section.metadata a.dev-link:contains("Email Developer")');
             if ($email->length()) {
-                $email = str_replace('mailto:', '', $email->attr('href'));
-                $app->setDeveloperEmail($email);
+                $app->setDeveloperEmail(str_replace('mailto:', '', $email->attr('href')));
             }
 
             $videos = $page->find('.doc-video-section object');
@@ -224,7 +206,7 @@ class GooglePlay extends MarketBot\Android
                 }
             }
 
-            $screenshots = $page->find('.screenshot-carousel-content-container img');
+            $screenshots = $page->find('div.thumbnails img.screenshot');
             if ($screenshots->length()) {
                 // Could rewrite this with pq->map() if they had better documentation on
                 // how to use it.
@@ -235,7 +217,22 @@ class GooglePlay extends MarketBot\Android
                 }
             }
 
-            $permission_types = array('dangerous', 'safe');
+            $rating = $page->find('div.current-rating');
+            if ($rating->length()) {
+                $styles = $rating->attr('style');
+                $styles = explode(';', $styles);
+                foreach ($styles as $style) {
+                    if (strpos($style, 'width:') !== false) {
+                        $style = str_replace('width: ', '', $style);
+                        $style = str_replace('%', '', $style);
+
+                        $app->setRating($style);
+                        break;
+                    }
+                }
+            }
+
+            /*$permission_types = array('dangerous', 'safe');
             foreach ($permission_types as $permission_type) {
                 $permissions = $page->find('#doc-permissions-' . $permission_type . ' .doc-permission-group');
                 if ($permissions->length()) {
@@ -257,41 +254,29 @@ class GooglePlay extends MarketBot\Android
                         }
                     }
                 }
-            }
+            }*/
 
-            $metadata = $page->find('.doc-metadata dt');
-            foreach ($metadata as $meta) {
-                $meta = pq($meta);
-                $field_name = $meta->text();
+            $recommendations = $page->find('.details-section.recommendation .rec-cluster');
+            if ($recommendations->length()) {
+                foreach ($recommendations as $recommendation) {
+                    $recommendation = pq($recommendation);
 
-                switch ($field_name) {
-                    case 'Updated:':
-                        $app->setLastUpdated($meta->next()->text());
-                        break;
-                    case 'Current Version:':
-                        $app->setCurrentVersion($meta->next()->text());
-                        break;
-                    case 'Requires Android:':
-                        $app->setRequires($meta->next()->text());
-                        break;
-                    case 'Category:':
-                        $app->setCategory($meta->next()->text());
-                        break;
-                    case 'Installs:':
-                        $installs = $meta->next()->find('div')->text();
-                        $installs = str_replace($installs, '', $meta->next()->text());
+                    $related_apps = $recommendation->find('div.cards div.card');
+                    if ($related_apps->length()) {
+                        foreach ($related_apps as $related_app) {
+                            $related_app = pq($related_app);
 
-                        $app->setInstalls($installs);
-                        break;
-                    case 'Size:':
-                        $app->setSize($meta->next()->text());
-                        break;
-                    case 'Price:':
-                        $app->setPrice($meta->next()->text());
-                        break;
-                    case 'Content Rating:':
-                        $app->setContentRating($meta->next()->text());
-                        break;
+                            switch ($recommendation->find('h1.heading')->text()) {
+                                case 'Similar':
+                                    $app->addRelated($related_app->attr('data-docid'));
+                                break;
+
+                                case 'More from developer':
+                                    $app->addMoreFromDeveloper($related_app->attr('data-docid'));
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         } catch (Exception $e) {
