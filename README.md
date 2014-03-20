@@ -1,5 +1,7 @@
 # MarketBot
 
+[![Build Status](https://travis-ci.org/jonursenbach/marketbot.png)](https://travis-ci.org/jonursenbach/marketbot)
+
 MarketBot is a PHP port of [Chad Remesch's](https://github.com/chadrem) Ruby Google Play scraper,
 [market_bot](https://github.com/chadrem/market_bot), and includes support for the Amazon Appstore and Windows Phone
 marketplaces.

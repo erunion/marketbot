@@ -3,6 +3,7 @@
     "description": "Smartphone marketplace scraper.",
     "license": "Modified BSD",
     "require": {
+        "php": ">=5.5.0",
         "electrolinux/phpquery": "dev-master"
     },
     "require-dev": {
