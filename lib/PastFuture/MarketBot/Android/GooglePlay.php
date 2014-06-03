@@ -197,12 +197,12 @@ class GooglePlay extends MarketBot\Android
                 $app->setDeveloperEmail(str_replace('mailto:', '', $email->attr('href')));
             }
 
-            $videos = $page->find('.doc-video-section object');
+            $videos = $page->find('.details-trailer');
             if ($videos->length()) {
                 foreach ($videos as $video) {
                     $video = pq($video);
 
-                    $app->addVideo($video->find('embed')->attr('src'));
+                    $app->addVideo($video->find('.play-action-container')->attr('data-video-url'));
                 }
             }
 
