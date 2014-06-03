@@ -42,7 +42,7 @@ class AmazonAppstoreTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $app->getPrice());
         $this->assertEquals([], $app->getScreenshots());
         $this->assertInternalType('string', $app->getCurrentVersion());
-        $this->assertEquals('28.9MB', $app->getSize());
+        $this->assertEquals('31.5MB', $app->getSize());
         $this->assertEquals('Guidance Suggested', $app->getContentRating());
         $this->assertEquals(null, $app->getInstalls());
         $this->assertInternalType('float', $app->getRating());
@@ -78,7 +78,7 @@ class AmazonAppstoreTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(6.99, $app->getPrice());
         $this->assertEquals([], $app->getScreenshots());
         $this->assertInternalType('string', $app->getCurrentVersion());
-        $this->assertEquals('10.3MB', $app->getSize());
+        $this->assertEquals('Varies by device (10.3MB - 10.7MB)', $app->getSize());
         $this->assertEquals('Guidance Suggested', $app->getContentRating());
         $this->assertEquals(null, $app->getInstalls());
         $this->assertInternalType('float', $app->getRating());

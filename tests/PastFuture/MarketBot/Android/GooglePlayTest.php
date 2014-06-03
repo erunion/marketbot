@@ -104,7 +104,7 @@ class GooglePlayTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('https://www.google.com/url?q=http://www.actionlauncher.com&sa=D&usg=AFQjCNFdryFa1jn9qszJpPzAIK3jdKUD9Q', $app->getWebsiteUrl());
         $this->assertFalse($app->getDeveloperEmail());
-        $this->assertEquals(2, count($app->getMoreFromDeveloper()));
+        $this->assertEquals(4, count($app->getMoreFromDeveloper()));
 
         //$this->assertEquals([], $app->getImages());
         //$this->assertEquals('http://ecx.images-amazon.com/images/I/61psbVb0TAL._SL500_AA300_.png', $app->getImageThumbnail());
